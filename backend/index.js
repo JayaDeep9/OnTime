@@ -50,28 +50,39 @@ app.use(express.urlencoded({ extended: true }));
 /* ===============================
    ✅ MONGODB CONNECTION (Serverless Optimized)
 ================================ */
-let isConnected = false;
+// Global cache to prevent multiple connections in serverless environment
+let cached = global.mongoose;
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
 
 const connectDB = async () => {
-  if (isConnected) {
-    return;
+  if (cached.conn) {
+    return cached.conn;
   }
 
-  if (mongoose.connection.readyState >= 1) {
-    isConnected = true;
-    return;
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false, // Disable Mongoose buffering
+      serverSelectionTimeoutMS: 5000,
+    };
+
+    cached.promise = mongoose.connect(process.env.MONGODB_URI, opts).then((mongoose) => {
+      console.log('✅ MongoDB connected successfully');
+      return mongoose;
+    });
   }
 
   try {
-    const db = await mongoose.connect(process.env.MONGODB_URI, {
-      serverSelectionTimeoutMS: 5000, // Fail fast if IP is blocked
-    });
-    isConnected = true;
-    console.log('✅ MongoDB connected successfully');
-  } catch (err) {
-    console.error('❌ MongoDB connection error:', err);
-    throw err; // Propagate error to middleware
+    cached.conn = await cached.promise;
+  } catch (e) {
+    cached.promise = null;
+    console.error('❌ MongoDB connection error:', e);
+    throw e;
   }
+
+  return cached.conn;
 };
 
 // Middleware to ensure DB is connected before handling requests
@@ -80,7 +91,12 @@ app.use(async (req, res, next) => {
     await connectDB();
     next();
   } catch (error) {
-    res.status(500).json({ message: "Database connection failed", error: error.message });
+    console.error("Database Connection Failed:", error);
+    res.status(500).json({
+      message: "Database connection failed",
+      error: error.message,
+      hint: "Check MongoDB Network Access (whitelist 0.0.0.0/0)"
+    });
   }
 });
 
