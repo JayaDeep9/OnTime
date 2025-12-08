@@ -48,11 +48,41 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 /* ===============================
-   ✅ MONGODB CONNECTION
+   ✅ MONGODB CONNECTION (Serverless Optimized)
 ================================ */
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ MongoDB connected successfully'))
-  .catch((err) => console.error('❌ MongoDB connection error:', err));
+let isConnected = false;
+
+const connectDB = async () => {
+  if (isConnected) {
+    return;
+  }
+
+  if (mongoose.connection.readyState >= 1) {
+    isConnected = true;
+    return;
+  }
+
+  try {
+    const db = await mongoose.connect(process.env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000, // Fail fast if IP is blocked
+    });
+    isConnected = true;
+    console.log('✅ MongoDB connected successfully');
+  } catch (err) {
+    console.error('❌ MongoDB connection error:', err);
+    throw err; // Propagate error to middleware
+  }
+};
+
+// Middleware to ensure DB is connected before handling requests
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    res.status(500).json({ message: "Database connection failed", error: error.message });
+  }
+});
 
 /* ===============================
    ✅ ROUTES
