@@ -5,6 +5,13 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+if (!process.env.MONGODB_URI) {
+  console.error("❌ FATAL: MONGODB_URI is not defined.");
+}
+if (!process.env.JWT_SECRET) {
+  console.error("❌ FATAL: JWT_SECRET is not defined.");
+}
+
 const app = express();
 
 /* ===============================

@@ -43,6 +43,7 @@ router.post('/signup', [
       },
     });
   } catch (error) {
+    console.error("Signup Error:", error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
@@ -87,6 +88,7 @@ router.post('/login', [
       },
     });
   } catch (error) {
+    console.error("Login Error:", error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
