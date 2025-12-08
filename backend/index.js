@@ -82,5 +82,17 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Internal Server Error" });
 });
 
-/* ✅ VERY IMPORTANT */
-module.exports = app;   // ✅ NO app.listen()
+/* ========================
+   ✅ SERVER (HYBRID MODE)
+======================== */
+const PORT = process.env.PORT || 5001;
+
+// For local development
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🚆 Server running on port ${PORT}`);
+  });
+}
+
+// For Vercel serverless
+module.exports = app;
