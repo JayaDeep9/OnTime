@@ -1,94 +1,145 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Sun, Moon } from "lucide-react"; // icons (you already installed lucide-react)
+import { useRouter, usePathname } from "next/navigation";
+import { Menu, X, Train } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { cn } from "@/lib/utils";
+import { LuAlarmClockCheck } from "react-icons/lu";
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
 
-  const [theme, setTheme] = useState("dark");
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    if (typeof window !== "undefined") {
+      return !!localStorage.getItem("token");
+    }
+    return false;
+  });
 
-  // Load stored theme from localStorage on first mount
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("theme");
-      if (saved) {
-        setTheme(saved);
-        document.documentElement.classList.toggle("dark", saved === "dark");
-      }
+      const token = localStorage.getItem("token");
+      setIsLoggedIn(!!token);
     }
-  }, []);
-
-  // Apply theme whenever it changes
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      document.documentElement.classList.toggle("dark", theme === "dark");
-      localStorage.setItem("theme", theme);
-    }
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
-  };
+  }, [pathname]);
 
   const logout = () => {
     localStorage.removeItem("token");
-    document.cookie = "token=; Max-Age=0";
+    setIsLoggedIn(false);
     router.push("/login");
   };
 
+  const navItems = [
+    { name: "Dashboard", href: "/dashboard" },
+    { name: "Search", href: "/search" },
+    { name: "Saved Routes", href: "/saved-routes" },
+    { name: "Live", href: "/live-station" },
+    { name: "History", href: "/history" },
+  ];
+
   return (
-    <nav className="w-full bg-white dark:bg-gray-900 shadow dark:shadow-lg border-b border-gray-200 dark:border-gray-800">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between text-black dark:text-white">
+    <>
+      <nav className="fixed top-6 inset-x-0 mx-auto max-w-4xl z-50 px-4">
+        <div className="relative rounded-full border border-border bg-card/90 backdrop-blur-xl shadow-lg px-6 py-3 flex items-center justify-between">
 
-        {/* LEFT - LOGO */}
-        <Link href="/" className="text-xl font-bold tracking-wide">
-          🚆 Train Delay Tracker
-        </Link>
-
-        {/* RIGHT - MENUS */}
-        <div className="flex items-center gap-6 text-sm font-medium">
-
-          <Link href="/dashboard" className="hover:text-blue-400 dark:hover:text-blue-400">
-            Dashboard
-          </Link>
-          
-          <Link href="/search" className="hover:text-blue-400 dark:hover:text-blue-400">
-            Search
-          </Link>
-
-          <Link href="/saved-routes" className="hover:text-blue-400 dark:hover:text-blue-400">
-            Saved Routes
-          </Link>
-
-          <Link href="/history" className="hover:text-blue-400 dark:hover:text-blue-400">
-            History
-          </Link>
-
-          {/* THEME TOGGLE */}
-          <button
-            onClick={toggleTheme}
-            aria-label="Toggle Theme"
-            className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+          {/* Logo */}
+          <Link
+            href="/"
+            className="flex items-center gap-2 group"
+            onClick={() => setMobileOpen(false)}
           >
-            {theme === "dark" ? (
-              <Sun className="w-5 h-5" />
-            ) : (
-              <Moon className="w-5 h-5" />
-            )}
-          </button>
+            <div className="p-1.5 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full group-hover:scale-110 transition-transform shadow-md">
+              <LuAlarmClockCheck />
+            </div>
+            <span className="text-lg font-bold tracking-tight text-foreground">
+              OnTime
+            </span>
+          </Link>
 
-          {/* LOGOUT */}
-          <button
-            onClick={logout}
-            className="px-3 py-1 rounded bg-red-600 hover:bg-red-700 text-white"
-          >
-            Logout
-          </button>
+          <div className="hidden md:flex items-center gap-1">
+            {isLoggedIn &&
+              navItems.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={cn(
+                    "px-4 py-2 text-sm font-medium rounded-full transition-all duration-200",
+                    pathname === item.href
+                      ? "text-cyan-500 bg-cyan-500/10"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  {item.name}
+                </Link>
+              ))}
+          </div>
+
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+
+            {/* Mobile Hamburger */}
+            <button
+              className="md:hidden p-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted transition-colors"
+              onClick={() => setMobileOpen((s) => !s)}
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+
+            <div className="hidden md:flex gap-2">
+              {isLoggedIn ? (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={logout}
+                  className="rounded-full text-red-500 hover:bg-red-500/10"
+                >
+                  Logout
+                </Button>
+              ) : (
+                <Link href="/login">
+                  <Button size="sm" className="rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold px-8 py-5 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                    Login
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      {mobileOpen && (
+        <div className="fixed top-24 inset-x-4 max-w-lg mx-auto z-40 p-4 rounded-3xl border border-border bg-card backdrop-blur-xl shadow-2xl flex flex-col gap-2 animate-in slide-in-from-top-4 fade-in-0 duration-200 md:hidden">
+          {isLoggedIn && navItems.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              onClick={() => setMobileOpen(false)}
+              className="px-4 py-3 rounded-xl text-base font-medium text-foreground hover:bg-muted transition-colors"
+            >
+              {item.name}
+            </Link>
+          ))}
+
+          <div className="h-px bg-border mx-2 my-2" />
+
+          {isLoggedIn ? (
+            <button onClick={() => { logout(); setMobileOpen(false); }} className="px-4 py-3 rounded-xl text-base font-medium text-red-500 hover:bg-red-500/10 text-left transition-colors">
+              Logout
+            </button>
+          ) : (
+            <Link href="/login" onClick={() => setMobileOpen(false)} className="px-4 py-3 rounded-xl text-base font-medium bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center transition-colors">
+              Login
+            </Link>
+          )}
+        </div>
+      )}
+    </>
   );
 }
+
+

@@ -1,15 +1,17 @@
-// backend/routes/trains.js
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const auth = require('../middleware/auth');
 const SearchHistory = require('../models/SearchHistory');
 
+// Load mock data
+const mockTrains = require('../mock/trains');
+
+  //  SEARCH ROUTE (Same as before)
 router.post('/search', auth, async (req, res) => {
   try {
     const { sourceStation, destinationStation, travelTime, trainNumber, journeyDate } = req.body;
 
-    // Save search history
     await SearchHistory.create({
       userId: req.userId,
       sourceStation,
@@ -17,12 +19,11 @@ router.post('/search', auth, async (req, res) => {
       travelTime,
     });
 
-    // RapidAPI integration
     const options = {
       method: 'GET',
       url: 'https://indian-railway-irctc.p.rapidapi.com/api/trains/v1/train/status',
       params: {
-        departure_date: journeyDate,    // e.g., "20250717"
+        departure_date: journeyDate,
         isH5: 'true',
         client: 'web',
         deviceIdentifier: 'Mozilla Firefox',
@@ -30,8 +31,7 @@ router.post('/search', auth, async (req, res) => {
       },
       headers: {
         'x-rapidapi-key': process.env.RAPIDAPI_KEY,
-        'x-rapidapi-host': 'indian-railway-irctc.p.rapidapi.com',
-        'x-rapid-api': 'rapid-api-database'
+        'x-rapidapi-host': 'indian-railway-irctc.p.rapidapi.com'
       }
     };
 
@@ -39,38 +39,46 @@ router.post('/search', auth, async (req, res) => {
 
     res.json({
       success: true,
-      route: {
-        sourceStation,
-        destinationStation,
-        travelTime,
-        trainNumber,
-        journeyDate
-      },
+      route: { sourceStation, destinationStation, travelTime, trainNumber, journeyDate },
       trainStatus: response.data
     });
 
   } catch (error) {
-    console.error("API ERROR:", error.message);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Train status API failed', 
-      error: error.message 
+    console.error("API ERROR:", error.response?.data || error.message);
+    res.status(500).json({
+      success: false,
+      message: 'Train status API failed',
+      error: error.message
     });
   }
 });
 
-// TRAIN DETAILS (Dynamic Route with Realtime Update)
+/* ------------------------------------------
+   DETAILS ROUTE (MOCK + API FALLBACK)
+------------------------------------------- */
 router.get('/details/:trainNo', auth, async (req, res) => {
   try {
-    const io = req.app.get("io");    // <<< SOCKET.IO INSTANCE ADDED
-    const { trainNo } = req.params;  // e.g., 12733
-    const { journeyDate } = req.query; // optional date
+    const io = req.app.get("io");
+    const { trainNo } = req.params;
+    const { journeyDate } = req.query;
+
+    // 1️⃣ If train exists in mock → return mock immediately
+    if (mockTrains[trainNo]) {
+      const trainData = mockTrains[trainNo];
+      io.emit(`trainUpdate:${trainNo}`, trainData);
+      return res.json({ success: true, trainNo, data: trainData });
+    }
+
+    // 2️⃣ Otherwise, try RapidAPI
+    const formattedDate =
+      journeyDate?.replace(/\D/g, "") ||
+      new Date().toISOString().slice(0, 10).replace(/-/g, "");
 
     const options = {
       method: 'GET',
       url: 'https://indian-railway-irctc.p.rapidapi.com/api/trains/v1/train/status',
       params: {
-        departure_date: journeyDate || new Date().toISOString().slice(0,10).replace(/-/g, ""), 
+        departure_date: formattedDate,
         isH5: 'true',
         client: 'web',
         deviceIdentifier: 'Mozilla Firefox',
@@ -78,27 +86,43 @@ router.get('/details/:trainNo', auth, async (req, res) => {
       },
       headers: {
         'x-rapidapi-key': process.env.RAPIDAPI_KEY,
-        'x-rapidapi-host': 'indian-railway-irctc.p.rapidapi.com',
-        'x-rapid-api': 'rapid-api-database'
+        'x-rapidapi-host': 'indian-railway-irctc.p.rapidapi.com'
       }
     };
 
-    const response = await axios.request(options);
+    let rawData;
+    try {
+      rawData = (await axios.request(options)).data;
+    } catch (apiError) {
+      console.log("API FAILED → USING MOCK IF AVAILABLE");
 
-    const trainData = response.data;
+      // fallback to mock if exists
+      if (mockTrains[trainNo]) {
+        const trainData = mockTrains[trainNo];
+        io.emit(`trainUpdate:${trainNo}`, trainData);
+        return res.json({ success: true, trainNo, data: trainData });
+      }
 
-    // 🔥 REALTIME UPDATE EMIT (NEW)
+      throw apiError; // no mock → throw error
+    }
+
+    // 3️⃣ Transform API response
+    const trainData = {
+      train_name: rawData?.data?.train_name || `Train ${trainNo}`,
+      train_number: trainNo,
+      route: rawData?.data?.route || [],
+      current_station: rawData?.data?.current_station,
+      status: rawData?.data?.status,
+      delay: rawData?.data?.delay || 0
+    };
+
+    // 4️⃣ Emit realtime update
     io.emit(`trainUpdate:${trainNo}`, trainData);
 
-    // Normal API response
-    res.json({
-      success: true,
-      trainNo,
-      data: trainData
-    });
+    return res.json({ success: true, trainNo, data: trainData });
 
   } catch (error) {
-    console.error("TRAIN DETAILS ERROR:", error.message);
+    console.error("TRAIN DETAILS ERROR:", error.response?.data || error.message);
     res.status(500).json({
       success: false,
       message: "Train details API failed",
@@ -106,8 +130,5 @@ router.get('/details/:trainNo', auth, async (req, res) => {
     });
   }
 });
-
-
-
 
 module.exports = router;

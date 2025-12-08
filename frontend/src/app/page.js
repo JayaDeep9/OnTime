@@ -1,196 +1,190 @@
-import Link from "next/link";
+"use client";
+import React from "react";
 import Navbar from "@/components/Navbar";
+import { BackgroundBeams } from "@/components/ui/background-beams";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
-export default function Home() {
+export default function LandingPage() {
+  const words = "Transforming Your Train Journey with Real-Time Precision";
+
+  const features = [
+    {
+      title: "Live Status",
+      description: "Track any train in real-time with zero latency updates.",
+      link: "/search",
+    },
+    {
+      title: "Route Analysis",
+      description: "Visual route maps with delay prediction markers.",
+      link: "/search",
+    },
+    {
+      title: "Smart Alerts",
+      description: "Get notified via WhatsApp or push notifications instantly.",
+      link: "/signup",
+    },
+    {
+      title: "PNR Status",
+      description: "Check prediction probability with industry-leading accuracy.",
+      link: "/search",
+    },
+    {
+      title: "Platform Locate",
+      description: "Crowdsourced platform numbers for every station.",
+      link: "/live-station",
+    },
+    {
+      title: "Saved Routes",
+      description: "One-tap access to your daily commute details.",
+      link: "/saved-routes",
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white relative">
+    <div >
+
       <Navbar />
 
-      {/* HERO SECTION */}
-      <section className="max-w-7xl mx-auto px-6 pt-20 pb-28 text-center relative">
-        <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight">
-          Real-Time Train Tracking<br />
-          <span className="text-blue-500">Made Simple.</span>
-        </h1>
+      <div className="relative">
 
-        <p className="mt-6 text-gray-300 max-w-2xl mx-auto text-lg leading-relaxed">
-          Get accurate live train status, track delays, save your favourite routes,
-          and receive instant updates — all in one seamless dashboard.
-        </p>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60rem] h-[30rem] bg-cyan-500/20 blur-[120px] rounded-full pointer-events-none" />
 
-        {/* Decorative Rings */}
-        <div className="absolute left-1/2 -translate-x-1/2 top-24 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl"></div>
-        <div className="absolute left-1/2 -translate-x-1/2 top-40 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl"></div>
-      </section>
+        <div className="relative z-10 text-center max-w-5xl mx-auto space-y-8 mt-20">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-white/10 backdrop-blur-md mb-8 hover:bg-white/20 transition">
+            <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+            <span className="text-sm font-medium text-cyan-600">Live Train Tracking V2.0</span>
+          </div>
 
-      {/* FEATURE CARDS */}
-      <section className="max-w-7xl mx-auto px-6 -mt-10 grid md:grid-cols-3 gap-6">
-        <div className="bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl border border-gray-800 shadow-lg hover:shadow-xl transition">
-          <h3 className="text-xl font-bold mb-2">🚆 Live Train Status</h3>
-          <p className="text-gray-400">
-            Get real-time updates on any train with accurate delay information.
+          <h1 className="text-6xl md:text-8xl font-bold tracking-tighter text-foreground">
+            Train Tracking for <br />
+            <span className="text-cyan-500">the rest of us.</span>
+          </h1>
+
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Seamlessly track trains across India with zero latency.  
+            No complex captchas. Just perfect accuracy.
           </p>
+
+          <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8">
+            <Link href="/search">
+              <Button className="h-14 px-10 text-lg rounded-full bg-cyan-500 hover:bg-cyan-600 text-white font-semibold transition-all hover:scale-105 shadow-[0_0_40px_-10px_rgba(6,182,212,0.6)]">
+                Start Tracking Now
+              </Button>
+            </Link>
+
+            <Link href="/live-station">
+              <Button variant="ghost" className="h-14 px-10 text-lg rounded-full text-muted-foreground hover:text-foreground hover:bg-white/10 border border-white/20 backdrop-blur-md transition-all">
+                Watch Demo →
+              </Button>
+            </Link>
+          </div>
         </div>
+      </div>
 
-        <div className="bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl border border-gray-800 shadow-lg hover:shadow-xl transition">
-          <h3 className="text-xl font-bold mb-2">⭐ Save Your Routes</h3>
-          <p className="text-gray-400">
-            Bookmark your frequent travel routes and receive instant updates.
-          </p>
-        </div>
-
-        <div className="bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl border border-gray-800 shadow-lg hover:shadow-xl transition">
-          <h3 className="text-xl font-bold mb-2">📍 Smart Station Search</h3>
-          <p className="text-gray-400">
-            Auto-suggest stations with instant matching for faster searches.
-          </p>
-        </div>
-      </section>
-
-      {/* SECOND HERO / PREVIEW SECTION */}
-      <main className="max-w-6xl mx-auto px-6 py-20">
-        <section className="grid md:grid-cols-2 gap-10 items-center">
-          {/* LEFT TEXT */}
-          <div className="space-y-6">
-            <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
-              Train Delay Tracker
-            </h1>
-
-            <p className="text-gray-300 max-w-2xl">
-              Get live train running status, delay alerts and save your favourite routes.
+      <div className="relative z-20 py-24">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold">
+              Works on <span className="text-cyan-500">everything.</span>
+            </h2>
+            <p className="mt-4 text-muted-foreground text-lg">
+              Don’t let legacy systems slow you down. Ontime bridges the gap.
             </p>
+          </div>
 
-            <div className="flex flex-wrap gap-3 mt-4">
-              <Link
-                href="/search"
-                className="inline-block bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium shadow"
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {features.map((feature, i) => (
+              <div
+                key={i}
+                className="group relative p-8 rounded-3xl bg-white/10 border border-white/20 backdrop-blur-xl shadow-lg hover:shadow-2xl transition-all"
               >
-                Search Trains
-              </Link>
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
-              <Link
-                href="/signup"
-                className="inline-block border border-gray-700 px-6 py-3 rounded-lg text-gray-200 hover:bg-gray-800"
-              >
-                Create Account
-              </Link>
-            </div>
-
-            <div className="flex gap-6 mt-8 text-sm text-gray-400">
-              <div>
-                <div className="text-white font-semibold">Realtime Status</div>
-                <div>Live running status updates</div>
-              </div>
-
-              <div>
-                <div className="text-white font-semibold">Saved Routes</div>
-                <div>Delay alerts for your routes</div>
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT SIDE PREVIEW */}
-          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 shadow-xl border border-gray-800">
-            <div className="flex flex-col gap-4">
-
-              {/* Upcoming Trains */}
-              <div className="bg-gray-800 p-4 rounded-lg">
-                <div className="text-sm text-gray-400">Next arrivals (sample)</div>
-
-                <div className="mt-3 space-y-3">
-
-                  {/* TRAIN 1 */}
-                  <div className="flex items-center justify-between p-3 bg-gray-900 rounded">
-                    <div>
-                      <div className="text-xs text-gray-400">
-                        12733 • Narayanadri Express
-                      </div>
-                      <div className="font-semibold">
-                        Departs 06:15 — Rajahmundry
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-yellow-300 font-bold">25m</div>
-                      <div className="text-xs text-gray-400">Delayed</div>
-                    </div>
+                <div className="relative z-10">
+                  <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 flex items-center justify-center mb-6 text-cyan-500 shadow-inner">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
                   </div>
 
-                  {/* TRAIN 2 */}
-                  <div className="flex items-center justify-between p-3 bg-gray-900 rounded">
-                    <div>
-                      <div className="text-xs text-gray-400">
-                        12805 • Visakha Express
-                      </div>
-                      <div className="font-semibold">Departs 07:00</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-green-400 font-bold">On time</div>
-                      <div className="text-xs text-gray-400">0m</div>
-                    </div>
-                  </div>
-
-                  {/* TRAIN 3 */}
-                  <div className="flex items-center justify-between p-3 bg-gray-900 rounded">
-                    <div>
-                      <div className="text-xs text-gray-400">
-                        17643 • Circar Express
-                      </div>
-                      <div className="font-semibold">
-                        Departs 08:30 — Samalkot
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-yellow-300 font-bold">45m</div>
-                      <div className="text-xs text-gray-400">Delayed</div>
-                    </div>
-                  </div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">{feature.title}</h3>
+                  <p className="text-muted-foreground">{feature.description}</p>
                 </div>
               </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
-              {/* Mini Stats */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="p-4 bg-gray-900 rounded-lg text-center">
-                  <div className="text-sm text-gray-400">Saved Routes</div>
-                  <div className="font-semibold mt-2">3</div>
-                </div>
+      <div className="relative z-20 py-24">
+        <div className="max-w-4xl mx-auto px-6">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-20">
+            How it <span className="text-cyan-500">Works</span>
+          </h2>
 
-                <div className="p-4 bg-gray-900 rounded-lg text-center">
-                  <div className="text-sm text-gray-400">Daily Searches</div>
-                  <div className="font-semibold mt-2">26</div>
-                </div>
+          <div className="relative border-l border-white/20 ml-6 md:ml-12 space-y-16">
+
+            <div className="relative pl-12 md:pl-20">
+              <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-cyan-500 shadow-lg" />
+
+              <div className="p-8 rounded-3xl bg-white/10 border border-white/20 backdrop-blur-xl shadow-lg transition-all">
+                <span className="text-cyan-500 font-mono text-xl mb-4 block">01</span>
+                <h3 className="text-2xl font-bold mb-3">Search Your Train</h3>
+                <p className="text-muted-foreground">
+                  Enter train number or station code. Our system locks onto real-time GPS instantly.
+                </p>
               </div>
-
             </div>
+
+            <div className="relative pl-12 md:pl-20">
+              <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-gray-400" />
+
+              <div className="p-8 rounded-3xl bg-white/10 border border-white/20 backdrop-blur-xl shadow-lg transition-all">
+                <span className="text-cyan-500 font-mono text-xl mb-4 block">02</span>
+                <h3 className="text-2xl font-bold mb-3">Get Live Status</h3>
+                <p className="text-muted-foreground">
+                  View precise location, delay predictions & platform numbers.
+                </p>
+              </div>
+            </div>
+
+            <div className="relative pl-12 md:pl-20">
+              <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-gray-400" />
+
+              <div className="p-8 rounded-3xl bg-white/10 border border-white/20 backdrop-blur-xl shadow-lg transition-all">
+                <span className="text-cyan-500 font-mono text-xl mb-4 block">03</span>
+                <h3 className="text-2xl font-bold mb-3">Stay Updated</h3>
+                <p className="text-muted-foreground">
+                  Get WhatsApp alerts for delays or platform changes instantly.
+                </p>
+              </div>
+            </div>
+
           </div>
-        </section>
+        </div>
+      </div>
 
-        {/* CTA */}
-        <section className="mt-20 text-center">
-          <h2 className="text-xl font-bold">Start tracking trains now</h2>
-          <p className="text-gray-400 mt-1">Real-time delay updates and routing</p>
+      <div className="relative flex flex-col items-center justify-center py-32">
+        <div className="max-w-2xl mx-auto p-4 text-center relative z-10">
+          <h2 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-gray-900 to-gray-500 dark:from-white dark:to-gray-300">
+            Ready to travel smarter?
+          </h2>
 
-          <div className="flex justify-center gap-4 mt-5">
-            <Link
-              href="/search"
-              className="px-6 py-2 bg-blue-600 rounded-lg hover:bg-blue-700"
-            >
-              Search
-            </Link>
+          <p className="text-muted-foreground max-w-lg mx-auto my-4 text-lg">
+            Join thousands of daily commuters who save time using Ontime.
+          </p>
 
-            <Link
-              href="/signup"
-              className="px-6 py-2 border border-gray-600 rounded-lg hover:bg-gray-800"
-            >
-              Register
-            </Link>
-          </div>
-        </section>
-      </main>
+          <Link href="/signup">
+            <Button className="mt-6 px-8 py-4 rounded-full bg-cyan-600 text-white text-xl hover:bg-cyan-700 transition-transform hover:-translate-y-1 shadow-xl">
+              Get Started →
+            </Button>
+          </Link>
+        </div>
 
-      {/* FOOTER */}
-      <footer className="text-center text-gray-500 py-10">
-        © {new Date().getFullYear()} Train Delay Tracker. All rights reserved.
-      </footer>
+        <BackgroundBeams />
+      </div>
+
     </div>
   );
 }
