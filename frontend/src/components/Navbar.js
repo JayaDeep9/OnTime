@@ -47,7 +47,6 @@ export default function Navbar() {
       <nav className="fixed top-6 inset-x-0 mx-auto max-w-4xl z-50 px-4">
         <div className="relative rounded-full border border-border bg-card/90 backdrop-blur-xl shadow-lg px-6 py-3 flex items-center justify-between">
 
-          {/* Logo */}
           <Link
             href="/"
             className="flex items-center gap-2 group"
@@ -82,7 +81,6 @@ export default function Navbar() {
           <div className="flex items-center gap-3">
             <ThemeToggle />
 
-            {/* Mobile Hamburger */}
             <button
               className="md:hidden p-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted transition-colors"
               onClick={() => setMobileOpen((s) => !s)}

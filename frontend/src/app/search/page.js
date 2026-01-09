@@ -107,10 +107,8 @@ export default function SearchPage() {
       console.error("Auto-save failed:", error);
     }
 
-    // Simulate a brief loading state
     setTimeout(() => {
       setLoading(false);
-      // Navigate to results page with query parameters
       router.push(`/results?source=${encodeURIComponent(source)}&destination=${encodeURIComponent(destination)}`);
     }, 500);
   };
@@ -121,7 +119,6 @@ export default function SearchPage() {
 
       <div className="flex-1 max-w-6xl mx-auto px-6 py-10 pt-24 relative z-10 w-full overflow-visible">
 
-        {/* Header */}
         <div className="mb-10 text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600 mb-2">
             Search Train Status
@@ -129,7 +126,6 @@ export default function SearchPage() {
           <p className="text-muted-foreground text-lg">Find real-time information for your journey.</p>
         </div>
 
-        {/* Search Card */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -138,7 +134,6 @@ export default function SearchPage() {
           <Card className="bg-card/40 border-border/50 backdrop-blur-md shadow-2xl relative z-20 overflow-visible mb-16">
             <CardContent className="p-8 space-y-6 overflow-visible">
 
-              {/* Station Inputs */}
               <div className="grid md:grid-cols-2 gap-6 overflow-visible">
                 <div className="relative z-20">
                   <StationInput label="Source Station" value={source} onChange={setSource} />
@@ -148,7 +143,6 @@ export default function SearchPage() {
                 </div>
               </div>
 
-              {/* Search Button */}
               <Button
                 onClick={searchTrains}
                 disabled={loading}
@@ -160,7 +154,6 @@ export default function SearchPage() {
           </Card>
         </motion.div>
 
-        {/* Explore More Section */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -175,7 +168,6 @@ export default function SearchPage() {
             </p>
           </div>
 
-          {/* Feature Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {exploreFeatures.map((feature, index) => {
               const Icon = feature.icon;
@@ -190,21 +182,17 @@ export default function SearchPage() {
                     className="group cursor-pointer bg-card/40 border-border/50 backdrop-blur-md hover:bg-card/60 transition-all duration-300 hover:scale-105 hover:shadow-xl relative overflow-hidden"
                     onClick={() => toast.info(`${feature.title} - Coming soon!`)}
                   >
-                    {/* Gradient overlay on hover */}
                     <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
 
                     <CardContent className="p-6 flex flex-col items-center text-center space-y-3 relative z-10">
-                      {/* Icon with gradient background */}
                       <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                         <Icon className="w-7 h-7 text-white" />
                       </div>
 
-                      {/* Title */}
                       <h3 className="font-bold text-foreground text-sm md:text-base group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
                         {feature.title}
                       </h3>
 
-                      {/* Description - hidden on mobile */}
                       <p className="text-xs text-muted-foreground hidden md:block">
                         {feature.description}
                       </p>

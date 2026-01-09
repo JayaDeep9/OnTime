@@ -281,7 +281,6 @@ export default function ResultsPage() {
         return station.replace(/\s*\([^)]*\)\s*/g, '').trim();
     };
 
-    // Pagination Logic
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = trains.slice(indexOfFirstItem, indexOfLastItem);

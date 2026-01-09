@@ -28,7 +28,7 @@ export default function TrainTrackingPage() {
     const [lastUpdated, setLastUpdated] = useState(null);
     const [isMounted, setIsMounted] = useState(false);
 
-    const trainNumber = params.trainNumber; // ✅ consistent slug
+    const trainNumber = params.trainNumber;
     const journeyDate = searchParams.get("date");
 
     useEffect(() => {
@@ -125,7 +125,6 @@ export default function TrainTrackingPage() {
             <div className="relative z-10">
                 <Navbar />
 
-                {/* HEADER */}
                 <div className="pt-20 pb-6">
                     <div className="max-w-6xl mx-auto px-6">
                         <div className="flex items-center justify-between mb-6">
@@ -164,7 +163,6 @@ export default function TrainTrackingPage() {
                             </div>
                         </div>
 
-                        {/* ACTION ROW */}
                         <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
                             {[
                                 { icon: Calendar, label: "Today" },
@@ -185,9 +183,7 @@ export default function TrainTrackingPage() {
                     </div>
                 </div>
 
-                {/* MAIN CONTENT */}
                 <div className="max-w-6xl mx-auto px-6 pb-12">
-                    {/* TABS */}
                     <div className="flex border-b border-gray-300 dark:border-gray-700 mb-6">
                         {["arrival", "departure"].map((tab) => (
                             <button
@@ -203,7 +199,6 @@ export default function TrainTrackingPage() {
                         ))}
                     </div>
 
-                    {/* ROUTE TIMELINE */}
                     <div className="bg-white/60 dark:bg-black/30 backdrop-blur-xl rounded-2xl p-6 border border-gray-300 dark:border-gray-700 shadow-lg">
                         {trainRoute.map((station, index) => {
                             const status = getStationStatus(station);
@@ -218,7 +213,6 @@ export default function TrainTrackingPage() {
                                     transition={{ delay: index * 0.05 }}
                                     className="flex items-start gap-4 py-3"
                                 >
-                                    {/* ARRIVAL */}
                                     <div className="w-20 text-right">
                                         <p
                                             className={`text-sm ${isDeparted
@@ -230,7 +224,6 @@ export default function TrainTrackingPage() {
                                         </p>
                                     </div>
 
-                                    {/* DOT + LINE */}
                                     <div className="flex flex-col items-center">
                                         {isCurrent ? (
                                             <div className="w-8 h-8 bg-cyan-600 rounded-full flex items-center justify-center shadow">
@@ -255,7 +248,6 @@ export default function TrainTrackingPage() {
                                         )}
                                     </div>
 
-                                    {/* STATION NAME */}
                                     <div className="flex-1">
                                         <h4
                                             className={`font-semibold ${isDeparted || isCurrent
@@ -267,7 +259,6 @@ export default function TrainTrackingPage() {
                                         </h4>
                                     </div>
 
-                                    {/* DEPARTURE */}
                                     <div className="w-20 text-left">
                                         <p
                                             className={`text-sm ${isDeparted
@@ -283,7 +274,6 @@ export default function TrainTrackingPage() {
                         })}
                     </div>
 
-                    {/* STATUS FOOTER */}
                     {currentStation && (
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
