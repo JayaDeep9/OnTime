@@ -4,7 +4,6 @@ const auth = require('../middleware/auth');
 const SavedRoute = require('../models/SavedRoute');
 const User = require('../models/User');
 
-// Get user profile
 router.get('/profile', auth, async (req, res) => {
   try {
     const user = await User.findById(req.userId).select('-password');
@@ -14,7 +13,6 @@ router.get('/profile', auth, async (req, res) => {
   }
 });
 
-// Save a route
 router.post('/routes', auth, async (req, res) => {
   try {
     const { sourceStation, destinationStation, preferredTime, routeName } = req.body;
@@ -34,7 +32,6 @@ router.post('/routes', auth, async (req, res) => {
   }
 });
 
-// Get saved routes
 router.get('/routes', auth, async (req, res) => {
   try {
     const routes = await SavedRoute.find({ userId: req.userId }).sort({ createdAt: -1 });
@@ -44,7 +41,6 @@ router.get('/routes', auth, async (req, res) => {
   }
 });
 
-// Delete saved route
 router.delete('/routes/:id', auth, async (req, res) => {
   try {
     await SavedRoute.findOneAndDelete({ _id: req.params.id, userId: req.userId });

@@ -3,15 +3,30 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const SearchHistory = require('../models/SearchHistory');
 
-// Load mock data
 const mockTrains = require('../mock/trains');
+router.get('/history', auth, async (req, res) => {
+  try {
+    const history = await SearchHistory.find({ userId: req.userId })
+      .sort({ createdAt: -1 });
 
-// SEARCH ROUTE - Returns mock trains based on search criteria
+    res.json({
+      success: true,
+      history
+    });
+  } catch (error) {
+    console.error("History Fetch Error:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch search history",
+      error: error.message
+    });
+  }
+});
+
 router.post('/search', auth, async (req, res) => {
   try {
     const { sourceStation, destinationStation, travelTime, trainNumber, journeyDate } = req.body;
 
-    // Save search history
     await SearchHistory.create({
       userId: req.userId,
       sourceStation,
@@ -46,12 +61,10 @@ router.post('/search', auth, async (req, res) => {
   }
 });
 
-// DETAILS ROUTE - Returns mock train details only
 router.get('/details/:trainNo', auth, async (req, res) => {
   try {
     const { trainNo } = req.params;
 
-    // Return mock data if available
     if (mockTrains[trainNo]) {
       return res.json({
         success: true,
@@ -60,7 +73,6 @@ router.get('/details/:trainNo', auth, async (req, res) => {
       });
     }
 
-    // Train not found
     res.status(404).json({
       success: false,
       message: `Train ${trainNo} not found in database`,

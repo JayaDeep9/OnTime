@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
 
-// Mock live station data
 const mockLiveStations = {
   "SC": {
     station_name: "Secunderabad Junction",
@@ -51,7 +50,6 @@ router.get("/:stationCode", auth, async (req, res) => {
     const { stationCode } = req.params;
     const stationCodeUpper = stationCode.toUpperCase();
 
-    // Check if we have mock data for this station
     if (mockLiveStations[stationCodeUpper]) {
       return res.json({
         success: true,
@@ -60,7 +58,6 @@ router.get("/:stationCode", auth, async (req, res) => {
       });
     }
 
-    // Station not found
     res.status(404).json({
       success: false,
       message: `No live data available for station ${stationCodeUpper}`,
